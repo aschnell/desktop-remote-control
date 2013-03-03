@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Hello Remote</string>
+  <string name="mixer">Mixer</string>
+  <string name="mplayer">MPlayer</string>
+  <string name="xmms">XMMS</string>
+</resources>

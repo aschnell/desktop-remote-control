@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <PreferenceCategory
+      android:title="Server">
+
+    <EditTextPreference
+	android:key="name"
+	android:title="Name"
+	android:summary="Name"
+	android:inputType="textUri"
+	android:defaultValue="192.168.178.20"
+	android:dialogTitle="dialog_title"/>
+
+    <EditTextPreference
+	android:key="port"
+	android:title="Port"
+	android:summary="Port"
+	android:inputType="number"
+	android:defaultValue="51203"
+	android:dialogTitle="dialog_title"/>
+
+  </PreferenceCategory>
+
+</PreferenceScreen>

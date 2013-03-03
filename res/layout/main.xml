@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+	 android:id="@android:id/tabhost"
+	 android:layout_width="fill_parent"
+	 android:layout_height="fill_parent">
+  <LinearLayout
+      android:orientation="vertical"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent">
+    <TabWidget
+	android:id="@android:id/tabs"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"/>
+    <FrameLayout
+	android:id="@android:id/tabcontent"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+
+      <TableLayout
+	  android:id="@+id/textview1"
+	  android:layout_width="match_parent"
+	  android:layout_height="match_parent">
+
+	<TableRow>
+	  <TextView style="@style/bigtext" android:id="@+id/mixer_master_volume" android:text="dB"/>
+	  <TextView style="@style/bigtext" android:id="@+id/mixer_pcm_volume" android:text="dB"/>
+	  <TextView style="@style/bigtext" android:id="@+id/mixer_front_volume" android:text="dB"/>
+	</TableRow>
+	<TableRow>
+	  <Button style="@style/bigbutton" android:id="@+id/mixer_master_up_1" android:text="Master +1dB"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mixer_pcm_up_1" android:text="PCM +1dB"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mixer_front_up_1" android:text="Front +1dB"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mixer_reset" android:text="Reset"/>
+	</TableRow>
+	<TableRow>
+	  <Button style="@style/bigbutton" android:id="@+id/mixer_master_down_1" android:text="Master -1dB"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mixer_pcm_down_1" android:text="PCM -1dB"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mixer_front_down_1" android:text="Front -1dB"/>
+	</TableRow>
+	<TableRow>
+	  <Button style="@style/bigbutton" android:id="@+id/mixer_master_down_20" android:text="Master -20dB"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mixer_pcm_down_20" android:text="PCM -20dB"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mixer_front_down_20" android:text="Front -20dB"/>
+	</TableRow>
+	<TableRow>
+	  <ToggleButton style="@style/bigbutton" android:id="@+id/mixer_master_switch"
+			android:textOn="Master Mute" android:textOff="Master Mute"/>
+	  <ToggleButton style="@style/bigbutton" android:id="@+id/mixer_pcm_switch"
+			android:textOn="PCM Mute" android:textOff="PCM Mute"
+			android:visibility="invisible"/>
+	  <ToggleButton style="@style/bigbutton" android:id="@+id/mixer_front_switch"
+			android:textOn="Front Mute" android:textOff="Front Mute"/>
+	</TableRow>
+      </TableLayout>
+
+
+      <TableLayout
+	  android:id="@+id/textview2"
+	  android:layout_width="match_parent"
+	  android:layout_height="match_parent">
+
+	<TableRow>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_volume_up" android:text="Volume Up"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_forward_10s" android:text="+10s"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_forward_1m" android:text="+1m"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_forward_10m" android:text="+10m"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_panscan_plus" android:text="+panscan"/>
+	</TableRow>
+	<TableRow>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_volume_down" android:text="Volume Down"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_backward_10s" android:text="-10s"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_backward_1m" android:text="-1m"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_backward_10m" android:text="-10m"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_panscan_minus" android:text="-panscan"/>
+	</TableRow>
+	<TableRow>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_pause" android:text="Pause"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_quit" android:text="Quit"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_osd" android:text="OSD"/>
+	  <Button style="@style/bigbutton" android:id="@+id/mplayer_fullscreen" android:text="Fullscreen"/>
+	</TableRow>
+      </TableLayout>
+
+
+      <TableLayout
+	  android:id="@+id/textview3"
+	  android:layout_width="match_parent"
+	  android:layout_height="match_parent">
+
+	<TableRow>
+	  <Button style="@style/bigbutton" android:id="@+id/xmms_play" android:text="Play"/>
+	  <Button style="@style/bigbutton" android:id="@+id/xmms_pause" android:text="Pause"/>
+	  <Button style="@style/bigbutton" android:id="@+id/xmms_stop" android:text="Stop"/>
+	</TableRow>
+	<TableRow>
+	  <Button style="@style/bigbutton" android:id="@+id/xmms_shuffle" android:text="Shuffle"/>
+	  <Button style="@style/bigbutton" android:id="@+id/xmms_repeat" android:text="Repeat"/>
+	  <Button style="@style/bigbutton" android:id="@+id/xmms_quit" android:text="Quit"/>
+	</TableRow>
+	<TableRow>
+	  <Button style="@style/bigbutton" android:id="@+id/xmms_volume_up" android:text="Volume Up"/>
+	  <Button style="@style/bigbutton" android:id="@+id/xmms_forward_song" android:text="Forward Song"/>
+	  <Button style="@style/bigbutton" android:id="@+id/xmms_forward_5s" android:text="+5s"/>
+	</TableRow>
+	<TableRow>
+	  <Button style="@style/bigbutton" android:id="@+id/xmms_volume_down" android:text="Volume Down"/>
+	  <Button style="@style/bigbutton" android:id="@+id/xmms_backward_song" android:text="Backward Song"/>
+	  <Button style="@style/bigbutton" android:id="@+id/xmms_backward_5s" android:text="-5s"/>
+	</TableRow>
+      </TableLayout>
+
+
+    </FrameLayout>
+  </LinearLayout>
+</TabHost>
