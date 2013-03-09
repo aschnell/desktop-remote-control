@@ -3,24 +3,11 @@
 
 package com.example.helloremote;
 
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,7 +19,6 @@ import android.widget.ToggleButton;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.preference.PreferenceManager;
 
 
@@ -40,17 +26,7 @@ public class HelloRemote extends TabActivity
 {
     private static final String TAG = "Remote";
 
-    private BlockingQueue<String> send_queue = new LinkedBlockingQueue<String>();
-
-    private Socket socket;
-
-    private Haha send_thread;
-    private Huhu receive_thread;
-
-    private BufferedReader buffered_reader;
-    private BufferedWriter buffered_writer;
-
-    private Handler handler = new Handler();
+    private SocketHelper socket_helper;
 
 
     @Override
@@ -130,7 +106,6 @@ public class HelloRemote extends TabActivity
     public void onResume()
     {
 	super.onResume();
-	Log.i(TAG, "onResume");
 
 	openConnection();
     }
@@ -140,7 +115,6 @@ public class HelloRemote extends TabActivity
     public void onPause()
     {
 	super.onPause();
-	Log.i(TAG, "onPause");
 
 	closeConnection();
     }
@@ -151,181 +125,87 @@ public class HelloRemote extends TabActivity
 	SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
 	String name = preferences.getString("name", "");
-	String port = preferences.getString("port", "51203");
+	int port = Integer.parseInt(preferences.getString("port", "51203"));
 
-	send_thread = new Haha(name, Integer.parseInt(port));
-	send_thread.start();
+	socket_helper = new SocketHelper(name, port);
+	socket_helper.setOnReceiveListener(new Helper2());
+	socket_helper.start();
     }
 
 
     private void closeConnection()
     {
-	send_thread.interrupt();
+	socket_helper.interrupt();
     }
 
 
     private void helper(int id, String method, String param1)
     {
-	findViewById(id).setOnClickListener(new Helper(method + " " + param1));
+	findViewById(id).setOnClickListener(new Helper1(method + "," + param1));
     }
 
     private void helper(int id, String method, String param1, String param2)
     {
-	findViewById(id).setOnClickListener(new Helper(method + " " + param1 + " " + param2));
+	findViewById(id).setOnClickListener(new Helper1(method + "," + param1 + "," + param2));
     }
 
     private void helper(int id, String method, String param1, String param2, String param3)
     {
-	findViewById(id).setOnClickListener(new Helper(method + " " + param1 + " " + param2 + " " +
-						       param3));
+	findViewById(id).setOnClickListener(new Helper1(method + "," + param1 + "," + param2 + "," +
+							param3));
     }
 
 
-    private void handle_message(String message)
+    class Helper1 implements OnClickListener
     {
-	String tokens[] = message.split(" ");
+	private String str;
 
-	if (tokens[0].equals("mixer"))
+	public Helper1(String str)
 	{
-	    if (tokens[1].equals("Master"))
-	    {
-		TextView volume = (TextView) findViewById(R.id.mixer_master_volume);
-		volume.setText(tokens[2]);
-
-		ToggleButton button = (ToggleButton) findViewById(R.id.mixer_master_switch);
-		button.setChecked(tokens[3].equals("off"));
-	    }
-	    else if (tokens[1].equals("PCM"))
-	    {
-		TextView volume = (TextView) findViewById(R.id.mixer_pcm_volume);
-		volume.setText(tokens[2]);
-	    }
-	    else if (tokens[1].equals("Front"))
-	    {
-		TextView volume = (TextView) findViewById(R.id.mixer_front_volume);
-		volume.setText(tokens[2]);
-
-		ToggleButton button = (ToggleButton) findViewById(R.id.mixer_front_switch);
-		button.setChecked(tokens[3].equals("off"));
-	    }
-	}
-    }
-
-
-    class Helper implements OnClickListener
-    {
-	private String command;
-
-	public Helper(String command)
-	{
-	    this.command = command;
+	    this.str = str;
 	}
 
+	@Override
 	public void onClick(View v)
 	{
-	    try
-	    {
-		send_queue.put(command);
-	    }
-	    catch (final InterruptedException e)
-	    {
-		Log.e(TAG, "InterruptedException");
-	    }
+	    if (socket_helper == null)
+		return;
+
+	    socket_helper.send(str);
 	}
     }
 
 
-    class Huhu extends Thread
+    class Helper2 implements SocketHelper.OnReceiveListener
     {
 	@Override
-	public void run()
+	public void onReceive(SocketHelper socket_helper, String str)
 	{
-	    while (true)
+	    String tokens[] = str.split(",");
+
+	    if (tokens[0].equals("mixer"))
 	    {
-		try
+		if (tokens[1].equals("Master"))
 		{
-		    final String message = buffered_reader.readLine();
+		    TextView volume = (TextView) findViewById(R.id.mixer_master_volume);
+		    volume.setText(tokens[2]);
 
-		    handler.post(new Runnable() {
-			@Override public void run() {
-			    handle_message(message);
-			}
-		    });
+		    ToggleButton button = (ToggleButton) findViewById(R.id.mixer_master_switch);
+		    button.setChecked(tokens[3].equals("off"));
 		}
-		catch (final IOException e)
+		else if (tokens[1].equals("PCM"))
 		{
-		    Log.e(TAG, "IOException");
+		    TextView volume = (TextView) findViewById(R.id.mixer_pcm_volume);
+		    volume.setText(tokens[2]);
 		}
-	    }
-	}
-    }
-
-
-    class Haha extends Thread
-    {
-	private String name;
-	private int port;
-
-
-	public Haha(String name, int port)
-	{
-	    this.name = name;
-	    this.port = port;
-	}
-
-
-	@Override
-	public void run()
-	{
-	    Log.i(TAG, "socket: " + String.format("%s:%d", name, port));
-
-	    try
-	    {
-		socket = new Socket(name, port);
-		socket.setKeepAlive(true);
-
-		buffered_reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		buffered_writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-	    }
-	    catch (final UnknownHostException e)
-	    {
-		Log.e(TAG, "UnknownHostException");
-	    }
-	    catch (final IOException e)
-	    {
-		Log.e(TAG, "IOException");
-	    }
-
-	    receive_thread = new Huhu();
-	    receive_thread.start();
-
-	    while (true)
-	    {
-		try
+		else if (tokens[1].equals("Front"))
 		{
-		    String command = send_queue.take();
-		    buffered_writer.write(command, 0, command.length());
-		    buffered_writer.newLine();
-		    buffered_writer.flush();
-		}
-		catch (final InterruptedException e)
-		{
-		    Log.e(TAG, "InterruptedException");
-		    break;
-		}
-		catch (final IOException e)
-		{
-		    Log.e(TAG, "IOException");
-		}
-	    }
+		    TextView volume = (TextView) findViewById(R.id.mixer_front_volume);
+		    volume.setText(tokens[2]);
 
-	    try
-	    {
-		socket.close();
-	    }
-	    catch (final IOException e)
-	    {
-		Log.e(TAG, "IOException");
+		    ToggleButton button = (ToggleButton) findViewById(R.id.mixer_front_switch);
+		    button.setChecked(tokens[3].equals("off"));
+		}
 	    }
 	}
     }
@@ -348,6 +228,11 @@ public class HelloRemote extends TabActivity
 	    case R.id.preferences:
 		Intent intent = new Intent(this, Preferences.class);
 		startActivity(intent);
+		break;
+
+	    case R.id.reconnect:
+		closeConnection();
+		openConnection();
 		break;
 	}
 

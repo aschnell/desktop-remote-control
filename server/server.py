@@ -12,7 +12,7 @@ from xmms import XMMS
 
 def dispatch(command):
     print "received:", command
-    tmp = command.split()
+    tmp = command.split(",")
     program = programs.get(tmp[0])
     if program != None:
         program.action(tmp[1:])

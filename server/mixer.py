@@ -30,17 +30,17 @@ class Mixer:
         volume = element.get_volume_tuple()
         switch = element.get_switch_tuple()
 
-        line = "mixer " + name
+        line = "mixer," + name
 
         if len(volume) == 0:
-            line += " unknown"
+            line += ",unknown"
         else:
-            line += " " + str(element.ask_volume_dB(volume[0]) * 0.01) + "dB"
+            line += "," + str(element.ask_volume_dB(volume[0]) * 0.01) + "dB"
 
         if len(switch) == 0:
-            line += " unknown"
+            line += ",unknown"
         else:
-            line += " " + ("on" if switch[0] else "off")
+            line += "," + ("on" if switch[0] else "off")
 
         return line
 
