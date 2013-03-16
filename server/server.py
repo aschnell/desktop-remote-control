@@ -2,7 +2,7 @@
 
 # Copyright (c) 2012-2013 Arvin Schnell
 
-from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
+from socket import socket, error, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from select import poll, POLLIN, POLLOUT
 
 from mixer import Mixer
@@ -35,6 +35,8 @@ class Client:
         self.sock = sock
         self.input = ""
         self.output = ""
+        self.input_error = False
+        self.output_error = False
 
     def fileno(self):
         return self.sock.fileno()
@@ -43,17 +45,36 @@ class Client:
         print "connected:", self.sock.getpeername()[0], client.fileno()
         poller.register(self.fileno(), POLLIN)
 
+    def set_poller(self):
+        flags = 0
+        if not self.input_error:
+            flags |= POLLIN
+        if not self.output_error and self.output:
+            flags |= POLLOUT
+        poller.modify(self.fileno(), flags)
+
     def cleanup(self):
-        print "disconnected:"
-        poller.unregister(self.fileno())
-        self.sock.close()
-        clients.remove(self)
+        if self.input_error and ( self.output_error or not self.output ):
+            print "disconnected:"
+            poller.unregister(self.fileno())
+            self.sock.close()
+            clients.remove(self)
 
     def handle_read(self):
 
-        data = self.sock.recv(1)
-        if not data:
+        try:
+            data = self.sock.recv(1)
+        except error:
+            self.input_error = True
+            self.set_poller()
             self.cleanup()
+            return
+
+        if not data:
+            self.input_error = True
+            self.set_poller()
+            self.cleanup()
+            return
 
         if data == "\n":
             if self.input:
@@ -64,9 +85,19 @@ class Client:
 
     def handle_write(self):
 
-        sent = self.sock.send(self.output[0])
-        if sent == 0:
+        try:
+            sent = self.sock.send(self.output[0])
+        except error:
+            self.output_error = True
+            self.set_poller()
             self.cleanup()
+            return
+
+        if sent == 0:
+            self.output_error = True
+            self.set_poller()
+            self.cleanup()
+            return
 
         self.output = self.output[1:]
 
@@ -78,8 +109,7 @@ class Client:
         for message in messages:
             self.output += message + "\n"
 
-        if self.output:
-            poller.modify(self.fileno(), POLLIN | POLLOUT)
+        self.set_poller()
 
 
 programs = dict({ "mixer" : ExtMixer(),
