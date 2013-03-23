@@ -10,14 +10,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.widget.Button;
 import android.widget.ToggleButton;
 import android.widget.TabHost;
-import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.preference.PreferenceManager;
 
@@ -41,17 +39,17 @@ public class HelloRemote extends TabActivity
 
 	TabHost mTabHost = getTabHost();
 
-	TabSpec tab1 = mTabHost.newTabSpec("mixer");
+	TabHost.TabSpec tab1 = mTabHost.newTabSpec("mixer");
 	tab1.setIndicator(getString(R.string.mixer));
 	tab1.setContent(R.id.textview1);
 	mTabHost.addTab(tab1);
 
-	TabSpec tab2 = mTabHost.newTabSpec("mplayer");
+	TabHost.TabSpec tab2 = mTabHost.newTabSpec("mplayer");
 	tab2.setIndicator(getString(R.string.mplayer));
 	tab2.setContent(R.id.textview2);
 	mTabHost.addTab(tab2);
 
-	TabSpec tab3 = mTabHost.newTabSpec("xmms");
+	TabHost.TabSpec tab3 = mTabHost.newTabSpec("xmms");
 	tab3.setIndicator(getString(R.string.xmms));
 	tab3.setContent(R.id.textview3);
 	mTabHost.addTab(tab3);
@@ -156,7 +154,7 @@ public class HelloRemote extends TabActivity
     }
 
 
-    class Helper1 implements OnClickListener
+    class Helper1 implements View.OnClickListener
     {
 	private String str;
 
