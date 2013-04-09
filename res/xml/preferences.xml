@@ -8,18 +8,16 @@
     <EditTextPreference
 	android:key="name"
 	android:title="Name"
-	android:summary="Name"
 	android:inputType="textUri"
 	android:defaultValue="192.168.178.23"
-	android:dialogTitle="dialog_title"/>
+	android:dialogTitle="Set server name"/>
 
     <EditTextPreference
 	android:key="port"
 	android:title="Port"
-	android:summary="Port"
 	android:inputType="number"
 	android:defaultValue="51203"
-	android:dialogTitle="dialog_title"/>
+	android:dialogTitle="Set server port"/>
 
   </PreferenceCategory>
 
